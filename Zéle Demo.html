@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Zéle</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400;1,600&family=Righteous&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --cr:#FBF3E4;--cr2:#F0E2C8;--cr3:#E2CFA8;
+  --te:#C4522A;--oc:#E8B830;--br:#3E1F08;--br2:#6B3A18;--br3:#9A6030;
+  --tx:#2A1406;--mu:#7A4E28;--so:#B08A5A;
+}
+html,body{min-height:100vh;background:#1a0a04;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;}
+.phone{width:390px;height:844px;background:var(--cr);border-radius:44px;overflow:hidden;position:relative;box-shadow:0 32px 80px rgba(0,0,0,0.6);display:flex;flex-direction:column;}
+@media(max-width:430px){html,body{align-items:flex-start;}.phone{width:100vw;height:100vh;border-radius:0;}}
+.sc{position:absolute;top:0;left:0;right:0;bottom:64px;display:none;flex-direction:column;overflow:hidden;background:var(--cr);}
+.sc.on{display:flex;}
+.sc.fullscreen{bottom:0 !important;}
+.scr{overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch;}
+.scr::-webkit-scrollbar{display:none;}
+
+@keyframes pu{from{opacity:0;transform:scale(0.9) translateY(10px);}to{opacity:1;transform:scale(1) translateY(0);}}
+@keyframes fu{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+@keyframes sp{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.tap{transition:transform 0.12s cubic-bezier(0.34,1.56,0.64,1);}
+.tap:active{transform:scale(0.94);}
+
+/* ── NAVBAR ── */
+.navbar{position:absolute;bottom:0;left:0;right:0;height:64px;background:var(--cr);border-top:2px solid var(--cr3);display:flex;align-items:center;justify-content:space-around;padding:0 0.5rem;z-index:100;}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:0.4rem 0.75rem;border-radius:16px;transition:background 0.15s;}
+.nav-item:active{background:var(--cr2);}
+.nav-icon svg{fill:var(--so);transition:fill 0.15s;display:block;}
+.nav-label{font-size:0.58rem;font-weight:800;color:var(--so);letter-spacing:0.05em;text-transform:uppercase;transition:color 0.15s;}
+.nav-item.active .nav-icon svg{fill:var(--br);}
+.nav-item.active .nav-label{color:var(--br);}
+
+/* ── LOGIN ── */
+#S1{bottom:0;}
+.ltop{background:var(--br);padding:3.5rem 2rem 4rem;display:flex;flex-direction:column;align-items:center;position:relative;overflow:hidden;flex-shrink:0;}
+.blob{position:absolute;border-radius:50%;}
+.b1{width:220px;height:220px;background:var(--te);opacity:.2;top:-80px;right:-60px;}
+.b2{width:140px;height:140px;background:var(--te);opacity:.14;bottom:-40px;left:-30px;}
+.b3{width:80px;height:80px;background:var(--oc);opacity:.12;top:40px;left:20px;}
+.logo{font-family:'Righteous',cursive;font-size:5.5rem;color:var(--cr);line-height:1;position:relative;z-index:1;}
+.logo span{color:var(--oc);}
+.ltag{font-size:.65rem;color:rgba(251,243,228,.45);letter-spacing:.2em;text-transform:uppercase;margin-top:.4rem;position:relative;z-index:1;}
+.lform{background:var(--cr);border-radius:36px 36px 0 0;padding:2.25rem 1.75rem 2rem;flex:1;overflow-y:auto;}
+.lbl{font-size:.62rem;font-weight:800;color:var(--mu);letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px;display:block;}
+.inp{width:100%;padding:.85rem 1.1rem;border-radius:20px;border:2px solid var(--cr3);background:#fff;font-family:'Nunito',sans-serif;font-size:.9rem;color:var(--tx);margin-bottom:.9rem;outline:none;transition:border .2s;}
+.inp:focus{border-color:var(--br3);}
+.bmain{width:100%;padding:1rem;border-radius:50px;background:var(--br);color:var(--cr);font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:800;border:none;cursor:pointer;}
+.or{display:flex;align-items:center;gap:12px;margin:1.1rem 0;}
+.orl{flex:1;height:1.5px;background:var(--cr3);}
+.ort{font-size:.68rem;color:var(--so);}
+.bghost{width:100%;padding:.9rem;border-radius:50px;background:transparent;color:var(--br);font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;border:2px solid var(--cr3);cursor:pointer;}
+
+/* ── LOADING ── */
+#S2{bottom:0;background:var(--br);align-items:center;justify-content:center;gap:.5rem;}
+.llogo{font-family:'Righteous',cursive;font-size:4.5rem;color:var(--cr);}
+.llogo span{color:var(--oc);}
+.lsub{font-size:.62rem;color:rgba(251,243,228,.4);letter-spacing:.2em;text-transform:uppercase;}
+.lring{width:56px;height:56px;border-radius:50%;border:3px solid rgba(232,184,48,.18);border-top-color:var(--oc);animation:sp 1s linear infinite;margin:2rem 0 1.25rem;}
+.lword{font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--oc);font-style:italic;text-align:center;transition:opacity .3s;min-height:2rem;}
+
+/* ── CULTURE PICK ── */
+#S3{background:var(--cr);}
+.chead{padding:2.5rem 1.6rem 0.75rem;flex-shrink:0;}
+.chello{font-size:.62rem;font-weight:800;color:var(--mu);letter-spacing:.15em;text-transform:uppercase;margin-bottom:.35rem;}
+.ctitle{font-family:'Cormorant Garamond',serif;font-size:1.85rem;font-weight:700;color:var(--tx);line-height:1.15;}
+.csub{font-size:.72rem;color:var(--so);margin-top:.3rem;}
+.cscroll{padding:0.75rem 1.4rem 1.5rem;display:flex;flex-direction:column;gap:14px;}
+
+/* BOLD culture cards */
+.ccard{border-radius:28px;overflow:hidden;cursor:pointer;position:relative;height:110px;animation:fu .4s ease both;box-shadow:0 4px 16px rgba(42,20,6,0.18);}
+.ccard-bg{position:absolute;inset:0;}
+.ccard-overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,0.55) 0%,rgba(0,0,0,0.1) 60%,transparent 100%);}
+.ccard-text{position:absolute;bottom:0;left:0;top:0;padding:0 1.25rem;display:flex;flex-direction:column;justify-content:center;}
+.ccard-name{font-family:'Righteous',cursive;font-size:1.4rem;color:#fff;line-height:1;text-shadow:0 2px 8px rgba(0,0,0,0.4);}
+.ccard-reg{font-size:.65rem;color:rgba(255,255,255,.75);margin-top:3px;font-weight:700;}
+
+/* ── SECTIONS ── */
+#S4{background:var(--cr);}
+.shero{background:var(--br);padding:2.25rem 1.6rem 1.75rem;border-radius:0 0 36px 36px;position:relative;overflow:hidden;flex-shrink:0;}
+.shb1{position:absolute;width:160px;height:160px;border-radius:50%;background:var(--te);opacity:.2;top:-55px;right:-35px;}
+.shb2{position:absolute;width:90px;height:90px;border-radius:50%;background:var(--oc);opacity:.12;bottom:-18px;left:18px;}
+.bk{font-size:.6rem;font-weight:800;color:rgba(251,243,228,.5);letter-spacing:.12em;text-transform:uppercase;cursor:pointer;margin-bottom:.85rem;display:flex;align-items:center;background:none;border:none;font-family:'Nunito',sans-serif;padding:0;position:relative;z-index:1;}
+.stitle{font-family:'Righteous',cursive;font-size:2.5rem;color:var(--cr);line-height:1;position:relative;z-index:1;}
+.sbadge{display:inline-flex;background:rgba(251,243,228,.12);color:rgba(251,243,228,.65);font-size:.58rem;font-weight:700;padding:3px 13px;border-radius:50px;margin-top:.5rem;letter-spacing:.09em;position:relative;z-index:1;}
+
+/* Blob section layout */
+.sec-blob-wrap{padding:1.25rem 1.2rem 2rem;display:flex;flex-direction:column;gap:12px;}
+.sec-blob{border-radius:999px;padding:1.4rem 1.6rem;cursor:pointer;display:flex;align-items:center;gap:1rem;animation:fu 0.4s ease both;}
+.sec-blob:nth-child(odd){margin-right:2.5rem;border-radius:50px 120px 120px 50px;}
+.sec-blob:nth-child(even){margin-left:2.5rem;border-radius:120px 50px 50px 120px;}
+.sec-blob-icon{width:48px;height:48px;flex-shrink:0;}
+.sec-nm{font-family:'Righteous',cursive;font-size:1.05rem;color:var(--tx);}
+.sec-ct{font-size:.65rem;color:var(--mu);margin-top:2px;font-weight:700;}
+.sba{background:#EDE0C4;}.sbb{background:#E8D8C0;}.sbc{background:#DDE8D4;}.sbd{background:#D8E4E8;}.sbe{background:#EAD8C4;}.sbf{background:#E2D8EE;}
+
+/* ── STORY LIST ── */
+#S5{background:var(--cr);}
+.slh{padding:2.25rem 1.6rem .85rem;flex-shrink:0;}
+.slbk{font-size:.6rem;font-weight:800;color:var(--mu);letter-spacing:.12em;text-transform:uppercase;cursor:pointer;margin-bottom:.65rem;display:flex;align-items:center;background:none;border:none;font-family:'Nunito',sans-serif;padding:0;}
+.sltl{font-family:'Righteous',cursive;font-size:1.85rem;color:var(--tx);}
+.slsb{font-size:.7rem;color:var(--so);margin-top:.2rem;}
+.slcs{padding:.4rem 1.5rem 2rem;display:flex;flex-direction:column;gap:14px;}
+.slc{border-radius:26px;overflow:hidden;cursor:pointer;box-shadow:0 3px 12px rgba(42,20,6,0.12);}
+.slt{height:120px;position:relative;display:flex;align-items:flex-end;padding:11px 15px;overflow:hidden;}
+.sltg{font-size:.6rem;font-weight:800;color:rgba(255,255,255,.9);letter-spacing:.13em;text-transform:uppercase;background:rgba(0,0,0,.3);padding:3px 11px;border-radius:50px;position:relative;z-index:1;}
+.slb{padding:.9rem 1.15rem;}
+.slnm{font-family:'Righteous',cursive;font-size:1rem;color:var(--tx);}
+.slds{font-size:.7rem;color:var(--mu);margin-top:3px;line-height:1.5;}
+.s-cal{background:#EDE0C4;}.s-yam{background:#E0EDD4;}.s-masq{background:#EAD8C4;}
+
+/* ── STORY INTRO ── */
+#S6{bottom:0;}
+.siw{flex:1;position:relative;overflow:hidden;display:flex;flex-direction:column;}
+.sia{flex:1;position:relative;overflow:hidden;}
+.siov{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(14,6,24,.1) 0%,rgba(24,8,8,.85) 100%);z-index:2;}
+.sitx{position:absolute;bottom:0;left:0;right:0;padding:1.75rem 1.6rem 2.5rem;z-index:3;}
+.siew{font-size:.6rem;font-weight:800;color:var(--oc);letter-spacing:.18em;text-transform:uppercase;margin-bottom:.45rem;}
+.sitl{font-family:'Righteous',cursive;font-size:2.4rem;color:var(--cr);line-height:1.1;margin-bottom:.65rem;}
+.sidc{font-size:.85rem;color:rgba(251,243,228,.78);line-height:1.6;margin-bottom:1.3rem;}
+.sibt{display:inline-block;background:var(--oc);color:var(--br);font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;padding:.85rem 2rem;border-radius:50px;cursor:pointer;border:none;}
+.sibk{position:absolute;top:1.1rem;left:1.4rem;z-index:10;background:rgba(62,31,8,.55);border:none;color:var(--cr);padding:.4rem .9rem;border-radius:50px;font-size:.62rem;font-weight:700;font-family:'Nunito',sans-serif;cursor:pointer;}
+
+/* ── STORY PAGE (dynamic text on full illustration) ── */
+#S7{bottom:0;}
+.story-page{flex:1;position:relative;overflow:hidden;}
+.story-art{position:absolute;inset:0;}
+.story-back-btn{position:absolute;top:1.1rem;left:1.4rem;z-index:10;background:rgba(62,31,8,.55);border:none;color:var(--cr);padding:.4rem .9rem;border-radius:50px;font-size:.62rem;font-weight:700;font-family:'Nunito',sans-serif;cursor:pointer;}
+
+/* Dynamic floating text pieces */
+.ft{position:absolute;z-index:5;cursor:default;}
+.ft-big{font-family:'Righteous',cursive;font-size:1.6rem;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,0.7),0 0 30px rgba(0,0,0,0.5);line-height:1.2;}
+.ft-big.ochre{color:var(--oc);text-shadow:0 2px 12px rgba(0,0,0,0.8);}
+.ft-big.terra{color:#FF8C60;text-shadow:0 2px 12px rgba(0,0,0,0.8);}
+.ft-med{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-style:italic;color:rgba(255,255,255,0.92);text-shadow:0 2px 10px rgba(0,0,0,0.7);line-height:1.5;}
+.ft-small{font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:700;color:rgba(255,255,255,0.8);text-shadow:0 1px 8px rgba(0,0,0,0.8);line-height:1.5;}
+.ft-label{font-family:'Nunito',sans-serif;font-size:.6rem;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:var(--oc);text-shadow:0 1px 6px rgba(0,0,0,0.8);}
+.ft-word{display:inline-block;background:rgba(232,184,48,.22);border:2px solid rgba(232,184,48,.7);border-radius:8px;padding:1px 8px;color:var(--oc);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.1rem;cursor:pointer;text-shadow:none;}
+.ft-word:active{background:rgba(232,184,48,.4);}
+
+.story-done{position:absolute;bottom:1.5rem;left:1.5rem;right:1.5rem;z-index:10;padding:.85rem;border-radius:50px;background:var(--oc);color:var(--br);font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;border:none;cursor:pointer;text-align:center;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:5rem;left:50%;transform:translateX(-50%);background:var(--cr);border-radius:20px;padding:.9rem 1.6rem;text-align:center;min-width:210px;z-index:9999;display:none;box-shadow:0 12px 32px rgba(42,20,6,.22);}
+.toast.on{display:block;animation:pu .26s cubic-bezier(0.34,1.56,0.64,1);}
+.tw{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--te);font-style:italic;}
+.tm{font-size:.68rem;color:var(--mu);margin-top:3px;line-height:1.4;}
+</style>
+</head>
+<body>
+<div class="phone">
+
+<!-- ═══ LOGIN ═══ -->
+<div class="sc fullscreen on" id="S1">
+  <div class="ltop">
+    <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+    <div class="logo">Zé<span>le</span></div>
+    <div class="ltag">Nigerian Languages &amp; Cultures</div>
+  </div>
+  <div class="lform">
+    <label class="lbl">Email</label>
+    <input class="inp" type="email" placeholder="you@email.com"/>
+    <label class="lbl">Password</label>
+    <input class="inp" type="password" placeholder="••••••••"/>
+    <button class="bmain tap" onclick="goLoad()">Sign in</button>
+    <div class="or"><div class="orl"></div><div class="ort">or</div><div class="orl"></div></div>
+    <button class="bghost tap" onclick="goLoad()">Create a free account</button>
+  </div>
+</div>
+
+<!-- ═══ LOADING ═══ -->
+<div class="sc fullscreen" id="S2">
+  <div class="llogo">Zé<span>le</span></div>
+  <div class="lsub">Language &amp; Culture</div>
+  <div class="lring"></div>
+  <div class="lword" id="LW">eiowio lezhagada</div>
+</div>
+
+<!-- ═══ CULTURE PICK ═══ -->
+<div class="sc" id="S3">
+  <div class="chead">
+    <div class="chello">Welcome back</div>
+    <div class="ctitle">Which culture would you like to explore?</div>
+    <div class="csub">Each language carries a whole world within it</div>
+  </div>
+  <div class="scr"><div class="cscroll">
+
+    <!-- LEGBO: deep terracotta forest scene -->
+    <div class="ccard tap" style="animation-delay:.04s" onclick="go('S4')">
+      <div class="ccard-bg">
+        <svg width="100%" height="110" viewBox="0 0 360 110" preserveAspectRatio="xMidYMid slice">
+          <rect width="360" height="110" fill="#4A2410"/>
+          <!-- layered hills -->
+          <ellipse cx="320" cy="110" rx="180" ry="80" fill="#7A3A18"/>
+          <ellipse cx="80" cy="110" rx="140" ry="70" fill="#6A2E14"/>
+          <!-- big trees -->
+          <rect x="255" y="30" width="12" height="80" rx="4" fill="#2A1408"/>
+          <ellipse cx="261" cy="28" rx="28" ry="35" fill="#3A2010"/>
+          <ellipse cx="261" cy="20" rx="20" ry="25" fill="#4A2C14"/>
+          <rect x="300" y="50" width="10" height="60" rx="3" fill="#2A1408"/>
+          <ellipse cx="305" cy="48" rx="22" ry="28" fill="#3A2010"/>
+          <rect x="230" y="55" width="8" height="55" rx="3" fill="#2A1408"/>
+          <ellipse cx="234" cy="53" rx="18" ry="22" fill="#3A2010"/>
+          <!-- sun glow -->
+          <ellipse cx="80" cy="30" rx="35" ry="35" fill="#E8B830" opacity=".25"/>
+          <ellipse cx="80" cy="30" rx="20" ry="20" fill="#E8B830" opacity=".3"/>
+          <!-- ground texture -->
+          <ellipse cx="180" cy="100" rx="200" ry="18" fill="#3A1A08" opacity=".5"/>
+        </svg>
+      </div>
+      <div class="ccard-overlay"></div>
+      <div class="ccard-text">
+        <div class="ccard-name">Legbo</div>
+        <div class="ccard-reg">Cross River State · Southeast Nigeria</div>
+      </div>
+    </div>
+
+    <!-- YORUBA: adire indigo greens -->
+    <div class="ccard tap" style="animation-delay:.08s" onclick="soon('Yoruba is coming soon!')">
+      <div class="ccard-bg">
+        <svg width="100%" height="110" viewBox="0 0 360 110" preserveAspectRatio="xMidYMid slice">
+          <rect width="360" height="110" fill="#2A4A1A"/>
+          <ellipse cx="300" cy="0" rx="160" ry="90" fill="#4A6A18"/>
+          <ellipse cx="60" cy="110" rx="130" ry="60" fill="#1A3A2A"/>
+          <!-- adire fabric pattern -->
+          <circle cx="80" cy="30" r="12" fill="none" stroke="#7AB858" stroke-width="2" opacity=".5"/>
+          <circle cx="80" cy="30" r="6" fill="#7AB858" opacity=".3"/>
+          <circle cx="110" cy="55" r="10" fill="none" stroke="#A8D870" stroke-width="2" opacity=".45"/>
+          <circle cx="110" cy="55" r="5" fill="#A8D870" opacity=".28"/>
+          <circle cx="55" cy="65" r="8" fill="none" stroke="#7AB858" stroke-width="1.5" opacity=".4"/>
+          <circle cx="130" cy="30" r="7" fill="none" stroke="#A8D870" stroke-width="1.5" opacity=".35"/>
+          <!-- river shimmer -->
+          <path d="M0 85 Q60 75 120 85 Q180 95 240 85 Q300 75 360 85" stroke="#60A880" stroke-width="3" fill="none" opacity=".35"/>
+          <path d="M0 95 Q80 88 160 95 Q240 102 360 95" stroke="#60A880" stroke-width="2" fill="none" opacity=".25"/>
+        </svg>
+      </div>
+      <div class="ccard-overlay"></div>
+      <div class="ccard-text">
+        <div class="ccard-name">Yoruba</div>
+        <div class="ccard-reg">Southwest Nigeria</div>
+      </div>
+    </div>
+
+    <!-- IGBO: chiefs red + uli earth -->
+    <div class="ccard tap" style="animation-delay:.12s" onclick="soon('Igbo is coming soon!')">
+      <div class="ccard-bg">
+        <svg width="100%" height="110" viewBox="0 0 360 110" preserveAspectRatio="xMidYMid slice">
+          <rect width="360" height="110" fill="#6A1A1A"/>
+          <ellipse cx="280" cy="0" rx="170" ry="80" fill="#8A3A1A"/>
+          <ellipse cx="50" cy="110" rx="120" ry="65" fill="#5A2A0A"/>
+          <!-- uli body art spirals -->
+          <path d="M60 25 Q80 10 100 25 Q120 40 100 55 Q80 70 60 55 Q40 40 60 25Z" fill="none" stroke="#E88080" stroke-width="2" opacity=".4"/>
+          <circle cx="80" cy="40" r="5" fill="#E88080" opacity=".35"/>
+          <path d="M100 70 Q115 58 130 70 Q145 82 130 94" fill="none" stroke="#E88080" stroke-width="1.5" opacity=".35"/>
+          <!-- red caps floating -->
+          <ellipse cx="200" cy="35" rx="18" ry="8" fill="#C4522A" opacity=".4"/>
+          <rect x="193" y="27" width="14" height="10" rx="3" fill="#C4522A" opacity=".35"/>
+          <ellipse cx="240" cy="55" rx="16" ry="7" fill="#C4522A" opacity=".35"/>
+          <rect x="234" y="48" width="12" height="9" rx="3" fill="#C4522A" opacity=".3"/>
+        </svg>
+      </div>
+      <div class="ccard-overlay"></div>
+      <div class="ccard-text">
+        <div class="ccard-name">Igbo</div>
+        <div class="ccard-reg">Southeast Nigeria</div>
+      </div>
+    </div>
+
+    <!-- HAUSA: desert gold dunes -->
+    <div class="ccard tap" style="animation-delay:.16s" onclick="soon('Hausa is coming soon!')">
+      <div class="ccard-bg">
+        <svg width="100%" height="110" viewBox="0 0 360 110" preserveAspectRatio="xMidYMid slice">
+          <rect width="360" height="110" fill="#6A4808"/>
+          <!-- sky -->
+          <rect width="360" height="55" fill="#8A6818"/>
+          <!-- sun -->
+          <ellipse cx="290" cy="28" rx="22" ry="22" fill="#E8C040" opacity=".7"/>
+          <ellipse cx="290" cy="28" rx="14" ry="14" fill="#F0D060" opacity=".8"/>
+          <!-- sand dunes -->
+          <ellipse cx="100" cy="110" rx="180" ry="55" fill="#9A7020"/>
+          <ellipse cx="280" cy="110" rx="160" ry="48" fill="#7A5A10"/>
+          <ellipse cx="50" cy="110" rx="120" ry="42" fill="#8A6018"/>
+          <!-- geometric embroidery pattern -->
+          <rect x="30" y="18" width="10" height="10" rx="1" fill="#E8C040" opacity=".3" transform="rotate(45 35 23)"/>
+          <rect x="55" y="28" width="8" height="8" rx="1" fill="#D4A030" opacity=".28" transform="rotate(45 59 32)"/>
+          <rect x="35" y="44" width="10" height="10" rx="1" fill="#E8C040" opacity=".28" transform="rotate(45 40 49)"/>
+          <rect x="65" y="48" width="7" height="7" rx="1" fill="#D4A030" opacity=".25" transform="rotate(45 68 51)"/>
+          <!-- mosque silhouette -->
+          <rect x="150" y="38" width="30" height="30" fill="#3A2808" opacity=".5"/>
+          <path d="M150 38 L165 22 L180 38Z" fill="#3A2808" opacity=".5"/>
+          <rect x="162" y="14" width="6" height="12" rx="2" fill="#3A2808" opacity=".45"/>
+        </svg>
+      </div>
+      <div class="ccard-overlay"></div>
+      <div class="ccard-text">
+        <div class="ccard-name">Hausa</div>
+        <div class="ccard-reg">Northern Nigeria</div>
+      </div>
+    </div>
+
+    <!-- EFIK: mangrove river -->
+    <div class="ccard tap" style="animation-delay:.20s" onclick="soon('Efik is coming soon!')">
+      <div class="ccard-bg">
+        <svg width="100%" height="110" viewBox="0 0 360 110" preserveAspectRatio="xMidYMid slice">
+          <rect width="360" height="110" fill="#183830"/>
+          <!-- sky -->
+          <rect width="360" height="50" fill="#1A4A3A"/>
+          <!-- water -->
+          <rect y="55" width="360" height="55" fill="#0E2820"/>
+          <path d="M0 55 Q60 48 120 55 Q180 62 240 55 Q300 48 360 55" stroke="#2A6A50" stroke-width="2" fill="none" opacity=".5"/>
+          <!-- water reflections -->
+          <path d="M40 70 Q80 65 120 70" stroke="#40A880" stroke-width="1.5" fill="none" opacity=".4"/>
+          <path d="M180 75 Q220 70 260 75" stroke="#40A880" stroke-width="1.5" fill="none" opacity=".35"/>
+          <path d="M280 68 Q310 64 340 68" stroke="#40A880" stroke-width="1" fill="none" opacity=".3"/>
+          <!-- mangrove trees -->
+          <rect x="55" y="20" width="8" height="50" rx="2" fill="#0E2018"/>
+          <ellipse cx="59" cy="18" rx="22" ry="18" fill="#1A4A28"/>
+          <ellipse cx="59" cy="12" rx="15" ry="12" fill="#2A5A30"/>
+          <!-- roots -->
+          <path d="M55 60 Q45 70 38 75" stroke="#0E2018" stroke-width="3" fill="none"/>
+          <path d="M59 62 Q59 72 55 78" stroke="#0E2018" stroke-width="3" fill="none"/>
+          <path d="M63 60 Q73 70 78 76" stroke="#0E2018" stroke-width="3" fill="none"/>
+          <rect x="285" y="25" width="7" height="45" rx="2" fill="#0E2018"/>
+          <ellipse cx="289" cy="23" rx="20" ry="16" fill="#1A4A28"/>
+          <path d="M285 58 Q276 68 270 73" stroke="#0E2018" stroke-width="2.5" fill="none"/>
+          <path d="M291 60 Q300 68 305 74" stroke="#0E2018" stroke-width="2.5" fill="none"/>
+          <!-- canoe -->
+          <ellipse cx="190" cy="78" rx="35" ry="7" fill="#2A1808"/>
+          <rect x="178" y="62" width="4" height="18" rx="1" fill="#3A2810"/>
+        </svg>
+      </div>
+      <div class="ccard-overlay"></div>
+      <div class="ccard-text">
+        <div class="ccard-name">Efik</div>
+        <div class="ccard-reg">Akwa Ibom &amp; Cross River</div>
+      </div>
+    </div>
+
+    <!-- MORE -->
+    <div class="ccard" style="animation-delay:.24s;opacity:0.45;cursor:default;">
+      <div class="ccard-bg" style="background:#3A2A18;"></div>
+      <div class="ccard-text">
+        <div class="ccard-name">More coming soon</div>
+        <div class="ccard-reg">Tiv · Ijaw · Urhobo &amp; more</div>
+      </div>
+    </div>
+
+  </div></div>
+</div>
+
+<!-- ═══ SECTIONS ═══ -->
+<div class="sc" id="S4">
+  <div class="shero">
+    <div class="shb1"></div><div class="shb2"></div>
+    <button class="bk tap" onclick="go('S3')">← All cultures</button>
+    <div class="stitle">Legbo</div>
+    <div class="sbadge">Cross River State · Southeast Nigeria</div>
+  </div>
+  <div class="scr">
+    <div class="sec-blob-wrap">
+      <div class="sec-blob sba tap" style="animation-delay:.04s" onclick="go('S5')">
+        <svg class="sec-blob-icon" viewBox="0 0 48 48"><circle cx="24" cy="24" r="9" fill="#C4522A"/><circle cx="24" cy="7" r="4.5" fill="#E8B830"/><circle cx="38" cy="14" r="4.5" fill="#E8B830"/><circle cx="38" cy="34" r="4.5" fill="#E8B830"/><circle cx="24" cy="41" r="4.5" fill="#E8B830"/><circle cx="10" cy="34" r="4.5" fill="#E8B830"/><circle cx="10" cy="14" r="4.5" fill="#E8B830"/></svg>
+        <div><div class="sec-nm">Festivals</div><div class="sec-ct">3 stories</div></div>
+      </div>
+      <div class="sec-blob sbb tap" style="animation-delay:.08s" onclick="soon('Weddings coming soon!')">
+        <svg class="sec-blob-icon" viewBox="0 0 48 48"><path d="M24 42 Q9 30 9 18 Q9 7 16 7 Q21 7 24 12 Q27 7 32 7 Q39 7 39 18 Q39 30 24 42Z" fill="#C4522A"/><circle cx="24" cy="18" r="6" fill="#E8B830"/></svg>
+        <div><div class="sec-nm">Weddings</div><div class="sec-ct">2 stories</div></div>
+      </div>
+      <div class="sec-blob sbc tap" style="animation-delay:.12s" onclick="soon('Language coming soon!')">
+        <svg class="sec-blob-icon" viewBox="0 0 48 48"><circle cx="17" cy="16" r="8" fill="#3A6A28"/><ellipse cx="17" cy="33" rx="10" ry="8" fill="#3A6A28"/><circle cx="31" cy="16" r="8" fill="#5A9A40"/><ellipse cx="31" cy="33" rx="10" ry="8" fill="#5A9A40"/></svg>
+        <div><div class="sec-nm">Language</div><div class="sec-ct">5 stories</div></div>
+      </div>
+      <div class="sec-blob sbd tap" style="animation-delay:.16s" onclick="soon('History coming soon!')">
+        <svg class="sec-blob-icon" viewBox="0 0 48 48"><rect x="7" y="12" width="34" height="26" rx="5" fill="#1E6A58"/><rect x="12" y="7" width="24" height="7" rx="3" fill="#2A8A70"/><rect x="13" y="19" width="22" height="3" rx="1.5" fill="#D4EDE8"/><rect x="13" y="25" width="15" height="3" rx="1.5" fill="#D4EDE8"/><rect x="13" y="31" width="19" height="3" rx="1.5" fill="#D4EDE8"/></svg>
+        <div><div class="sec-nm">History</div><div class="sec-ct">2 stories</div></div>
+      </div>
+      <div class="sec-blob sbe tap" style="animation-delay:.20s" onclick="soon('Food coming soon!')">
+        <svg class="sec-blob-icon" viewBox="0 0 48 48"><ellipse cx="24" cy="32" rx="15" ry="10" fill="#9A6030"/><ellipse cx="24" cy="28" rx="15" ry="10" fill="#C4522A"/><ellipse cx="24" cy="24" rx="11" ry="7" fill="#E8B830"/><ellipse cx="24" cy="21" rx="6" ry="4" fill="#FBF3E4"/></svg>
+        <div><div class="sec-nm">Food</div><div class="sec-ct">4 stories</div></div>
+      </div>
+      <div class="sec-blob sbf tap" style="animation-delay:.24s" onclick="soon('Traditions coming soon!')">
+        <svg class="sec-blob-icon" viewBox="0 0 48 48"><rect x="21" y="10" width="6" height="24" rx="3" fill="#6B3A18"/><ellipse cx="24" cy="10" rx="10" ry="7" fill="#3A6A28"/><circle cx="16" cy="7" r="5" fill="#5A9A40"/><circle cx="32" cy="7" r="5" fill="#5A9A40"/><circle cx="24" cy="4" r="4" fill="#7ABB58"/></svg>
+        <div><div class="sec-nm">Traditions</div><div class="sec-ct">4 stories</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ STORY LIST ═══ -->
+<div class="sc" id="S5">
+  <div class="slh">
+    <button class="slbk tap" onclick="go('S4')">← Legbo</button>
+    <div class="sltl">Festivals</div>
+    <div class="slsb">Stories from Cross River and Legbo culture</div>
+  </div>
+  <div class="scr"><div class="slcs">
+    <div class="slc s-cal tap" onclick="go('S6')">
+      <div class="slt" style="background:linear-gradient(135deg,#1A0A30,#C44020);">
+        <svg style="position:absolute;inset:0;width:100%;height:100%;" viewBox="0 0 390 120" preserveAspectRatio="xMidYMid slice">
+          <rect width="390" height="120" fill="#1A0A30"/>
+          <rect y="68" width="390" height="52" fill="#180808"/>
+          <ellipse cx="35" cy="95" rx="17" ry="28" fill="#0A0408"/><ellipse cx="78" cy="97" rx="16" ry="26" fill="#120608"/><ellipse cx="122" cy="93" rx="19" ry="30" fill="#0A0408"/><ellipse cx="166" cy="96" rx="16" ry="27" fill="#120608"/><ellipse cx="210" cy="92" rx="20" ry="31" fill="#0A0408"/><ellipse cx="254" cy="95" rx="16" ry="28" fill="#120608"/><ellipse cx="298" cy="93" rx="18" ry="29" fill="#0A0408"/><ellipse cx="342" cy="96" rx="16" ry="26" fill="#120608"/>
+          <circle cx="58" cy="28" r="7" fill="#E8B830" opacity=".85"/><circle cx="140" cy="18" r="6" fill="#C4522A" opacity=".9"/><circle cx="214" cy="26" r="9" fill="#E8B830" opacity=".75"/><circle cx="288" cy="16" r="6" fill="#C4522A" opacity=".85"/>
+        </svg>
+        <div class="sltg">Festival · Cross River</div>
+      </div>
+      <div class="slb"><div class="slnm">Calabar Carnival</div><div class="slds">Africa's biggest street party. Every December, Calabar comes alive with colour, drums, and masquerades.</div></div>
+    </div>
+    <div class="slc s-yam tap" onclick="soon('Coming soon!')">
+      <div class="slt" style="background:linear-gradient(135deg,#2A4A1A,#5A8A28);">
+        <div class="sltg">Harvest · Legbo</div>
+      </div>
+      <div class="slb"><div class="slnm">New Yam Festival</div><div class="slds">When the first yams are harvested, the community gathers to give thanks.</div></div>
+    </div>
+    <div class="slc s-masq tap" onclick="soon('Coming soon!')">
+      <div class="slt" style="background:linear-gradient(135deg,#4A2410,#8A5228);">
+        <div class="sltg">Ancestral · Legbo</div>
+      </div>
+      <div class="slb"><div class="slnm">The Masquerade Dance</div><div class="slds">Masquerades are messengers from the spirit world. A sacred occasion for the whole village.</div></div>
+    </div>
+  </div></div>
+</div>
+
+<!-- ═══ STORY INTRO ═══ -->
+<div class="sc fullscreen" id="S6">
+  <div class="siw">
+    <button class="sibk tap" onclick="go('S5')">← Back</button>
+    <div class="sia">
+      <svg style="position:absolute;inset:0;width:100%;height:100%;" viewBox="0 0 390 844" preserveAspectRatio="xMidYMid slice">
+        <rect width="390" height="844" fill="#0E0618"/>
+        <rect y="500" width="390" height="344" fill="#180A08"/>
+        <circle cx="38" cy="42" r="1.3" fill="#fff" opacity=".6"><animate attributeName="opacity" values=".6;.15;.6" dur="2.1s" repeatCount="indefinite"/></circle>
+        <circle cx="96" cy="24" r="1" fill="#fff" opacity=".5"><animate attributeName="opacity" values=".5;.1;.5" dur="1.7s" repeatCount="indefinite"/></circle>
+        <circle cx="158" cy="56" r="1.3" fill="#fff" opacity=".7"><animate attributeName="opacity" values=".7;.2;.7" dur="2.5s" repeatCount="indefinite"/></circle>
+        <circle cx="278" cy="48" r="1.3" fill="#fff" opacity=".6"><animate attributeName="opacity" values=".6;.1;.6" dur="2.3s" repeatCount="indefinite"/></circle>
+        <circle cx="336" cy="20" r="1" fill="#fff" opacity=".5"><animate attributeName="opacity" values=".5;.9;.5" dur="1.5s" repeatCount="indefinite"/></circle>
+        <ellipse cx="95" cy="160" rx="40" ry="55" fill="#C4522A" opacity=".1"><animate attributeName="cy" values="160;140;160" dur="4s" repeatCount="indefinite"/></ellipse>
+        <ellipse cx="285" cy="180" rx="45" ry="60" fill="#E8B830" opacity=".07"><animate attributeName="cy" values="180;158;180" dur="5s" repeatCount="indefinite"/></ellipse>
+        <path d="M0 240 Q55 227 110 240 Q165 253 220 240 Q275 227 330 240 Q362 249 390 240" stroke="#E8B830" stroke-width="1.3" fill="none" opacity=".3"/>
+        <circle cx="55" cy="235" r="4.5" fill="#E8B830" opacity=".9"><animate attributeName="opacity" values=".9;.3;.9" dur="1.2s" repeatCount="indefinite"/></circle>
+        <circle cx="110" cy="244" r="4.5" fill="#C4522A" opacity=".9"><animate attributeName="opacity" values=".9;.2;.9" dur=".9s" repeatCount="indefinite"/></circle>
+        <circle cx="165" cy="234" r="4.5" fill="#E8B830" opacity=".8"><animate attributeName="opacity" values=".8;.4;.8" dur="1.4s" repeatCount="indefinite"/></circle>
+        <circle cx="220" cy="243" r="4.5" fill="#C4522A" opacity=".9"><animate attributeName="opacity" values=".9;.2;.9" dur="1.1s" repeatCount="indefinite"/></circle>
+        <circle cx="275" cy="233" r="4.5" fill="#E8B830" opacity=".8"><animate attributeName="opacity" values=".8;.5;.8" dur="1.6s" repeatCount="indefinite"/></circle>
+        <circle cx="330" cy="243" r="4.5" fill="#C4522A" opacity=".9"><animate attributeName="opacity" values=".9;.3;.9" dur=".8s" repeatCount="indefinite"/></circle>
+        <!-- many dancers -->
+        <ellipse cx="55" cy="510" rx="11" ry="38" fill="#C4522A" opacity=".8"><animate attributeName="rx" values="11;7;11" dur=".7s" repeatCount="indefinite"/></ellipse>
+        <circle cx="55" cy="470" r="9" fill="#D4824A"/>
+        <ellipse cx="55" cy="458" rx="12" ry="7" fill="#E8B830"/>
+        <ellipse cx="110" cy="518" rx="13" ry="44" fill="#E8B830" opacity=".85"><animate attributeName="rx" values="13;8;13" dur=".85s" repeatCount="indefinite"/></ellipse>
+        <circle cx="110" cy="472" r="11" fill="#D4A040"/>
+        <ellipse cx="110" cy="459" rx="14" ry="8" fill="#C4522A"/>
+        <ellipse cx="170" cy="508" rx="12" ry="40" fill="#C4522A" opacity=".9"><animate attributeName="rx" values="12;7;12" dur=".75s" repeatCount="indefinite"/></ellipse>
+        <circle cx="170" cy="466" r="10" fill="#D4824A"/>
+        <ellipse cx="170" cy="454" rx="13" ry="7" fill="#E8B830"/>
+        <ellipse cx="225" cy="514" rx="14" ry="46" fill="#E8B830" opacity=".9"><animate attributeName="rx" values="14;9;14" dur=".9s" repeatCount="indefinite"/></ellipse>
+        <circle cx="225" cy="466" r="12" fill="#D4A040"/>
+        <ellipse cx="225" cy="452" rx="15" ry="9" fill="#C4522A"/>
+        <ellipse cx="285" cy="510" rx="12" ry="42" fill="#C4522A" opacity=".85"><animate attributeName="rx" values="12;7;12" dur=".8s" repeatCount="indefinite"/></ellipse>
+        <circle cx="285" cy="466" r="10" fill="#D4824A"/>
+        <ellipse cx="285" cy="454" rx="13" ry="7" fill="#E8B830"/>
+        <ellipse cx="340" cy="516" rx="13" ry="44" fill="#E8B830" opacity=".8"><animate attributeName="rx" values="13;8;13" dur=".95s" repeatCount="indefinite"/></ellipse>
+        <circle cx="340" cy="470" r="11" fill="#D4A040"/>
+        <ellipse cx="340" cy="457" rx="14" ry="8" fill="#C4522A"/>
+        <!-- crowd behind -->
+        <ellipse cx="28" cy="640" rx="18" ry="90" fill="#0A0408"/><ellipse cx="68" cy="652" rx="16" ry="82" fill="#120608"/><ellipse cx="110" cy="636" rx="20" ry="94" fill="#0A0408"/><ellipse cx="152" cy="648" rx="17" ry="88" fill="#120608"/><ellipse cx="196" cy="634" rx="20" ry="96" fill="#0A0408"/><ellipse cx="238" cy="646" rx="17" ry="88" fill="#120608"/><ellipse cx="280" cy="638" rx="19" ry="92" fill="#0A0408"/><ellipse cx="322" cy="648" rx="17" ry="84" fill="#120608"/><ellipse cx="362" cy="636" rx="18" ry="90" fill="#0A0408"/>
+        <!-- raised hands -->
+        <rect x="26" y="560" width="5" height="26" rx="2" fill="#1A1208"/><rect x="66" y="554" width="5" height="28" rx="2" fill="#1A1208"/><rect x="108" y="558" width="5" height="26" rx="2" fill="#1A1208"/><rect x="150" y="552" width="5" height="30" rx="2" fill="#1A1208"/><rect x="194" y="556" width="5" height="28" rx="2" fill="#1A1208"/><rect x="236" y="552" width="5" height="28" rx="2" fill="#1A1208"/>
+      </svg>
+      <div class="siov"></div>
+      <div class="sitx">
+        <div class="siew">Festivals · Cross River State</div>
+        <div class="sitl">Calabar Carnival</div>
+        <div class="sidc">Every December Calabar becomes Africa's biggest street party.</div>
+        <button class="sibt tap" onclick="go('S7')">Read the story →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ STORY PAGE — dynamic text on full illustration ═══ -->
+<div class="sc fullscreen" id="S7">
+  <div class="story-page">
+    <button class="story-back-btn tap" onclick="go('S6')">← Back</button>
+
+    <!-- FULL PAGE ILLUSTRATION -->
+    <div class="story-art">
+      <svg style="position:absolute;inset:0;width:100%;height:100%;" viewBox="0 0 390 844" preserveAspectRatio="xMidYMid slice">
+        <!-- night sky top third -->
+        <rect width="390" height="340" fill="#0E0618"/>
+        <!-- buildings middle -->
+        <rect y="220" width="390" height="624" fill="#180808"/>
+        <!-- sky gradient -->
+        <rect y="280" width="390" height="80" fill="#2A0808" opacity=".6"/>
+        <!-- stars -->
+        <circle cx="40" cy="55" r="1.5" fill="#fff" opacity=".7"><animate attributeName="opacity" values=".7;.2;.7" dur="2s" repeatCount="indefinite"/></circle>
+        <circle cx="108" cy="32" r="1.2" fill="#fff" opacity=".6"><animate attributeName="opacity" values=".6;.1;.6" dur="1.8s" repeatCount="indefinite"/></circle>
+        <circle cx="172" cy="68" r="1.5" fill="#fff" opacity=".5"><animate attributeName="opacity" values=".5;.2;.5" dur="2.4s" repeatCount="indefinite"/></circle>
+        <circle cx="244" cy="42" r="1" fill="#fff" opacity=".6"><animate attributeName="opacity" values=".6;.9;.6" dur="2s" repeatCount="indefinite"/></circle>
+        <circle cx="308" cy="60" r="1.5" fill="#fff" opacity=".7"><animate attributeName="opacity" values=".7;.1;.7" dur="1.6s" repeatCount="indefinite"/></circle>
+        <circle cx="362" cy="28" r="1.2" fill="#fff" opacity=".5"><animate attributeName="opacity" values=".5;.8;.5" dur="2.2s" repeatCount="indefinite"/></circle>
+        <!-- fireworks -->
+        <circle cx="75" cy="95" r="6" fill="#E8B830" opacity=".9"/>
+        <line x1="75" y1="95" x2="50" y2="68" stroke="#E8B830" stroke-width="2.5" opacity=".75"/><line x1="75" y1="95" x2="102" y2="66" stroke="#E8B830" stroke-width="2.5" opacity=".75"/><line x1="75" y1="95" x2="46" y2="105" stroke="#E8B830" stroke-width="2" opacity=".65"/><line x1="75" y1="95" x2="106" y2="108" stroke="#E8B830" stroke-width="2" opacity=".65"/><line x1="75" y1="95" x2="75" y2="62" stroke="#E8B830" stroke-width="2.5" opacity=".7"/>
+        <circle cx="300" cy="78" r="7" fill="#C4522A" opacity=".9"/>
+        <line x1="300" y1="78" x2="272" y2="50" stroke="#C4522A" stroke-width="2.5" opacity=".75"/><line x1="300" y1="78" x2="330" y2="48" stroke="#C4522A" stroke-width="2.5" opacity=".75"/><line x1="300" y1="78" x2="268" y2="90" stroke="#C4522A" stroke-width="2" opacity=".65"/><line x1="300" y1="78" x2="334" y2="92" stroke="#C4522A" stroke-width="2" opacity=".65"/>
+        <circle cx="185" cy="58" r="5" fill="#E8B830" opacity=".8"/>
+        <line x1="185" y1="58" x2="164" y2="36" stroke="#E8B830" stroke-width="2" opacity=".65"/><line x1="185" y1="58" x2="208" y2="34" stroke="#E8B830" stroke-width="2" opacity=".65"/>
+        <!-- buildings left -->
+        <rect x="10" y="240" width="60" height="604" fill="#0C0618"/>
+        <rect x="20" y="228" width="40" height="18" fill="#0C0618"/>
+        <!-- building windows -->
+        <rect x="18" y="248" width="12" height="14" rx="2" fill="#E8B830" opacity=".2"/>
+        <rect x="38" y="248" width="12" height="14" rx="2" fill="#E8B830" opacity=".15"/>
+        <rect x="18" y="272" width="12" height="14" rx="2" fill="#E8B830" opacity=".25"/>
+        <rect x="38" y="272" width="12" height="14" rx="2" fill="#C4522A" opacity=".2"/>
+        <!-- buildings right -->
+        <rect x="310" y="250" width="80" height="594" fill="#0E0618"/>
+        <rect x="320" y="238" width="55" height="18" fill="#0E0618"/>
+        <rect x="318" y="260" width="14" height="14" rx="2" fill="#E8B830" opacity=".2"/>
+        <rect x="342" y="260" width="14" height="14" rx="2" fill="#E8B830" opacity=".18"/>
+        <rect x="318" y="284" width="14" height="14" rx="2" fill="#C4522A" opacity=".2"/>
+        <!-- string lights across -->
+        <path d="M0 310 Q55 298 110 310 Q165 322 220 310 Q275 298 330 310 Q362 318 390 310" stroke="#E8B830" stroke-width="1.5" fill="none" opacity=".45"/>
+        <circle cx="55" cy="305" r="5" fill="#E8B830" opacity=".9"><animate attributeName="opacity" values=".9;.3;.9" dur="1.2s" repeatCount="indefinite"/></circle>
+        <circle cx="110" cy="314" r="5" fill="#C4522A" opacity=".9"><animate attributeName="opacity" values=".9;.2;.9" dur=".9s" repeatCount="indefinite"/></circle>
+        <circle cx="165" cy="304" r="5" fill="#E8B830" opacity=".85"><animate attributeName="opacity" values=".85;.4;.85" dur="1.4s" repeatCount="indefinite"/></circle>
+        <circle cx="220" cy="313" r="5" fill="#C4522A" opacity=".9"><animate attributeName="opacity" values=".9;.2;.9" dur="1.1s" repeatCount="indefinite"/></circle>
+        <circle cx="275" cy="303" r="5" fill="#E8B830" opacity=".85"><animate attributeName="opacity" values=".85;.5;.85" dur="1.6s" repeatCount="indefinite"/></circle>
+        <circle cx="330" cy="312" r="5" fill="#C4522A" opacity=".9"><animate attributeName="opacity" values=".9;.3;.9" dur=".8s" repeatCount="indefinite"/></circle>
+        <!-- main masquerade figures - large and central -->
+        <!-- figure 1 centre -->
+        <ellipse cx="195" cy="580" rx="26" ry="70" fill="#C4522A"/>
+        <ellipse cx="195" cy="510" rx="22" ry="15" fill="#C4522A" opacity=".7"/>
+        <circle cx="195" cy="492" r="20" fill="#D4824A"/>
+        <ellipse cx="195" cy="474" rx="26" ry="14" fill="#E8B830"/>
+        <rect x="188" y="456" width="6" height="22" rx="3" fill="#C4522A"/>
+        <rect x="198" y="452" width="5" height="26" rx="2.5" fill="#E8B830"/>
+        <rect x="178" y="455" width="5" height="18" rx="2.5" fill="#C4522A"/>
+        <rect x="213" y="455" width="5" height="18" rx="2.5" fill="#C4522A"/>
+        <ellipse cx="188" cy="488" rx="4" ry="5" fill="#3E1F08"/>
+        <ellipse cx="202" cy="488" rx="4" ry="5" fill="#3E1F08"/>
+        <path d="M188 500 Q195 505 202 500" stroke="#3E1F08" stroke-width="2" fill="none"/>
+        <ellipse cx="165" cy="535" rx="18" ry="7" fill="#C4522A" transform="rotate(-25 165 535)"/>
+        <ellipse cx="225" cy="535" rx="18" ry="7" fill="#C4522A" transform="rotate(25 225 535)"/>
+        <path d="M169 610 L158 650 L178 635 L185 658 L195 640 L205 658 L212 635 L232 650 L221 610Z" fill="#8B3A18"/>
+        <!-- figure 2 left -->
+        <ellipse cx="88" cy="590" rx="20" ry="56" fill="#E8B830" opacity=".9"/>
+        <circle cx="88" cy="532" r="16" fill="#D4A040"/>
+        <ellipse cx="88" cy="518" rx="20" ry="12" fill="#C4522A"/>
+        <rect x="82" y="504" width="5" height="18" rx="2.5" fill="#E8B830"/>
+        <ellipse cx="68" cy="555" rx="14" ry="6" fill="#E8B830" transform="rotate(-20 68 555)"/>
+        <ellipse cx="108" cy="555" rx="14" ry="6" fill="#E8B830" transform="rotate(20 108 555)"/>
+        <!-- figure 3 right -->
+        <ellipse cx="302" cy="588" rx="20" ry="56" fill="#C4522A" opacity=".9"/>
+        <circle cx="302" cy="530" r="16" fill="#D4824A"/>
+        <ellipse cx="302" cy="516" rx="20" ry="12" fill="#E8B830"/>
+        <rect x="296" y="502" width="5" height="18" rx="2.5" fill="#C4522A"/>
+        <ellipse cx="282" cy="553" rx="14" ry="6" fill="#C4522A" transform="rotate(-20 282 553)"/>
+        <ellipse cx="322" cy="553" rx="14" ry="6" fill="#C4522A" transform="rotate(20 322 553)"/>
+        <!-- figure 4 far left smaller -->
+        <ellipse cx="30" cy="620" rx="14" ry="44" fill="#E8B830" opacity=".7"/>
+        <circle cx="30" cy="574" r="12" fill="#D4A040" opacity=".85"/>
+        <!-- figure 5 far right smaller -->
+        <ellipse cx="360" cy="622" rx="14" ry="44" fill="#C4522A" opacity=".7"/>
+        <circle cx="360" cy="576" r="12" fill="#D4824A" opacity=".85"/>
+        <!-- crowd deepest back -->
+        <ellipse cx="50" cy="740" rx="20" ry="70" fill="#0A0408"/><ellipse cx="95" cy="750" rx="18" ry="65" fill="#120608"/><ellipse cx="142" cy="738" rx="22" ry="72" fill="#0A0408"/><ellipse cx="190" cy="748" rx="19" ry="68" fill="#120608"/><ellipse cx="238" cy="736" rx="21" ry="74" fill="#0A0408"/><ellipse cx="284" cy="746" rx="19" ry="68" fill="#120608"/><ellipse cx="330" cy="740" rx="20" ry="72" fill="#0A0408"/>
+        <rect x="48" y="678" width="5" height="28" rx="2" fill="#1A1208"/><rect x="93" y="672" width="5" height="30" rx="2" fill="#1A1208"/><rect x="140" y="676" width="5" height="28" rx="2" fill="#1A1208"/><rect x="188" y="670" width="5" height="32" rx="2" fill="#1A1208"/>
+      </svg>
+    </div>
+
+    <!-- DYNAMIC TEXT floating at different positions, children's book style -->
+    <div class="ft ft-label" style="top:132px;left:28px;">Cross River · December</div>
+
+    <div class="ft ft-big ochre" style="top:148px;left:22px;font-size:2rem;">Every December</div>
+
+    <div class="ft ft-med" style="top:200px;left:28px;max-width:200px;">the streets of Calabar fill with sound before they fill with people.</div>
+
+    <div class="ft ft-big terra" style="top:330px;right:18px;text-align:right;">The drums<br>come first.</div>
+
+    <div class="ft ft-small" style="top:420px;left:24px;max-width:160px;">Then the <span class="ft-word" onclick="showT('ékpè','sacred masquerade society — EK-peh')">ékpè</span> emerge from the dark.</div>
+
+    <div class="ft ft-big" style="bottom:200px;left:20px;font-size:1.4rem;max-width:180px;">By midnight,<br><span style="color:var(--oc);">Calabar belongs<br>to everyone.</span></div>
+
+    <button class="story-done tap" onclick="go('S5')">Back to stories</button>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<div class="navbar" id="navbar">
+  <div class="nav-item active" id="nav-home" onclick="navGo('S3','nav-home')">
+    <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H5a1 1 0 01-1-1V9.5z"/><rect x="9" y="13" width="6" height="8" rx="1" fill="inherit"/></svg></div>
+    <div class="nav-label">Explore</div>
+  </div>
+  <div class="nav-item" id="nav-stories" onclick="navGo('S5','nav-stories')">
+    <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><line x1="8" y1="8" x2="16" y2="8" stroke="white" stroke-width="1.5"/><line x1="8" y1="12" x2="16" y2="12" stroke="white" stroke-width="1.5"/><line x1="8" y1="16" x2="13" y2="16" stroke="white" stroke-width="1.5"/></svg></div>
+    <div class="nav-label">Stories</div>
+  </div>
+  <div class="nav-item" id="nav-profile" onclick="soon('Profile coming soon!')">
+    <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="none" stroke="currentColor" stroke-width="2"/></svg></div>
+    <div class="nav-label">Profile</div>
+  </div>
+  <div class="nav-item" id="nav-settings" onclick="soon('Settings coming soon!')">
+    <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3" fill="currentColor"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></div>
+    <div class="nav-label">Settings</div>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <div class="tw" id="TW"></div>
+  <div class="tm" id="TM"></div>
+</div>
+
+<style>
+.story-done{position:absolute;bottom:1.5rem;left:1.5rem;right:1.5rem;z-index:10;padding:.85rem;border-radius:50px;background:var(--oc);color:var(--br);font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;border:none;cursor:pointer;text-align:center;}
+.nav-item .nav-icon svg{fill:var(--so);}
+.nav-item.active .nav-icon svg{fill:var(--br);}
+</style>
+
+<script>
+var tt;
+function go(id){
+  document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));
+  var e=document.getElementById(id);
+  e.classList.add('on');
+  var nb=document.getElementById('navbar');
+  nb.style.display=['S1','S2','S6','S7'].includes(id)?'none':'flex';
+  e.querySelectorAll('.scr').forEach(s=>s.scrollTop=0);
+}
+function navGo(sid,nid){
+  go(sid);
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById(nid).classList.add('active');
+}
+function goLoad(){
+  go('S2');
+  var words=['eiowio lezhagada','lezha · tooth','ékpè · masquerade','ogbe · celebration','Calabar...'];
+  var i=0,el=document.getElementById('LW');
+  var step=function(){
+    el.style.opacity=0;
+    setTimeout(function(){el.textContent=words[i%words.length];el.style.opacity=1;i++;if(i<words.length)setTimeout(step,700);else setTimeout(function(){go('S3');},700);},260);
+  };
+  step();
+}
+function soon(m){showT('Coming soon',m);}
+function showT(w,m){
+  document.getElementById('TW').textContent=w;
+  document.getElementById('TM').textContent=m;
+  var t=document.getElementById('toast');
+  t.classList.add('on');
+  clearTimeout(tt);
+  tt=setTimeout(function(){t.classList.remove('on');},3000);
+}
+</script>
+</body>
+</html>
